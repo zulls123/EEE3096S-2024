@@ -23,6 +23,8 @@
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
 #include "stm32f0xx.h"
+#include <lcd_stm32f0.h>
+#include "lcd_stm32f0.c"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,6 +93,12 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   // TODO: Start timer TIM16
+
+  init_LCD();
+  lcd_command(CLEAR);
+  lcd_putstring("EEE3095S Lab 1");
+
+  
 
   /* USER CODE END 2 */
 
