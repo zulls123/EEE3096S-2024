@@ -18,11 +18,12 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include <lcd_stm32f0.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
 #include "stm32f0xx.h"
+#include "lcd_stm32f0.c"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -89,7 +90,9 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM16_Init();
   /* USER CODE BEGIN 2 */
-
+  init_LCD();
+  lcd_command(CLEAR);
+  lcd_putstring("test");
   // TODO: Start timer TIM16
 
   /* USER CODE END 2 */
