@@ -47,6 +47,27 @@ TIM_HandleTypeDef htim16;
 /* USER CODE BEGIN PV */
 // TODO: Define input variables
 
+uint8_t led_patterns[9] =
+{
+  0b11101001,
+  0b11010010,
+  0b10100100,
+  0b01001000,
+  0b10010000,
+  0b00100000,
+  0b01000000,
+  0b01000000,
+  0b10000000,
+  0b00000000
+};
+
+
+//current pattern
+uint8_t currentPattern = 0;
+uint32_t delayTime = 1000;
+
+
+
 
 /* USER CODE END PV */
 
