@@ -47,24 +47,23 @@ TIM_HandleTypeDef htim16;
 /* USER CODE BEGIN PV */
 // TODO: Define input variables
 
-uint8_t led_patterns[9] =
+uint8_t led_patterns[9][8] =
 {
-  0b11101001,
-  0b11010010,
-  0b10100100,
-  0b01001000,
-  0b10010000,
-  0b00100000,
-  0b01000000,
-  0b01000000,
-  0b10000000,
-  0b00000000
+    {1, 1, 1, 0, 1, 0, 0, 1},
+    {1, 1, 0, 1, 0, 0, 1, 0},
+    {1, 0, 1, 0, 0, 1, 0, 0},
+    {0, 1, 0, 0, 1, 0, 0, 0},
+    {1, 0, 0, 1, 0, 0, 0, 0},
+    {0, 0, 1, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}
 };
 
 
 //current pattern
 uint8_t currentPattern = 0;
-uint32_t delayTime = 1000;
+uint32_t delayTime = 10000;
 
 
 
@@ -77,6 +76,8 @@ static void MX_GPIO_Init(void);
 static void MX_TIM16_Init(void);
 /* USER CODE BEGIN PFP */
 void TIM16_IRQHandler(void);
+
+void pattern_display();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -114,10 +115,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   // TODO: Start timer TIM16
+  HAL_TIM_Base_Start_IT(&htim16);
 
   init_LCD();
   lcd_command(CLEAR);
-  lcd_putstring("EEE3095S Lab 1");
+  lcd_putstring("EEE3095S Prac 1");
 
   
 
@@ -132,9 +134,26 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
     // TODO: Check pushbuttons to change timer delay
+    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) != GPIO_PIN_SET)
+    {
+      delayTime = 500; // 0.5 seconds
+      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+    }
+    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) != GPIO_PIN_SET)
+    {
+      delayTime = 2000; // 2 seconds
+      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+    }
+    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) != GPIO_PIN_SET)
+    {
+      delayTime = 1000; // 1 second
+      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+    }
+    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) != GPIO_PIN_SET)
+    {
+      currentPattern = 0; // Reset to pattern 1
+    }
     
-    
-
   }
   /* USER CODE END 3 */
 }
@@ -355,8 +374,27 @@ void TIM16_IRQHandler(void)
 
 	// TODO: Change LED pattern
 	// print something
+  pattern_display (led_patterns[currentPattern]);
+	currentPattern = (currentPattern +1 )%9;
+
+  // Update timer period
+	__HAL_TIM_SET_AUTORELOAD(&htim16, delay - 1);
 
   
+}
+
+//pattern display function
+void pattern_display()
+{
+  // Change LED pattern
+	HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, led_patterns[currentPattern][0]);
+	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, led_patterns[currentPattern][1]);
+	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, led_patterns[currentPattern][2]);
+	HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, led_patterns[currentPattern][3]);
+	HAL_GPIO_WritePin(LED4_GPIO_Port, LED4_Pin, led_patterns[currentPattern][4]);
+	HAL_GPIO_WritePin(LED5_GPIO_Port, LED5_Pin, led_patterns[currentPattern][5]);
+	HAL_GPIO_WritePin(LED6_GPIO_Port, LED6_Pin, led_patterns[currentPattern][6]);
+	HAL_GPIO_WritePin(LED7_GPIO_Port, LED7_Pin, led_patterns[currentPattern][7]);
 }
 
 /* USER CODE END 4 */
