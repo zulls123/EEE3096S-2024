@@ -18,11 +18,12 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include <lcd_stm32f0.h>
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdint.h>
 #include "stm32f0xx.h"
+#include <lcd_stm32f0.h>
 #include "lcd_stm32f0.c"
 /* USER CODE END Includes */
 
@@ -45,6 +46,29 @@ TIM_HandleTypeDef htim16;
 
 /* USER CODE BEGIN PV */
 // TODO: Define input variables
+//true and false constants
+#define TRUE 1
+#define FALSE 0
+
+uint8_t led_patterns[9][8] =
+{
+    {1, 1, 1, 0, 1, 0, 0, 1},
+    {1, 1, 0, 1, 0, 0, 1, 0},
+    {1, 0, 1, 0, 0, 1, 0, 0},
+    {0, 1, 0, 0, 1, 0, 0, 0},
+    {1, 0, 0, 1, 0, 0, 0, 0},
+    {0, 0, 1, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0, 0},
+    {1, 0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0, 0}
+};
+
+
+//current pattern
+uint8_t currentPattern = 0;
+uint32_t delayTime = 10000;
+
+
 
 
 /* USER CODE END PV */
@@ -55,6 +79,8 @@ static void MX_GPIO_Init(void);
 static void MX_TIM16_Init(void);
 /* USER CODE BEGIN PFP */
 void TIM16_IRQHandler(void);
+
+void pattern_display();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -90,10 +116,28 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM16_Init();
   /* USER CODE BEGIN 2 */
+
+  // TODO: Start timer TIM16
+  HAL_TIM_Base_Start_IT(&htim16);
+
   init_LCD();
   lcd_command(CLEAR);
-  lcd_putstring("test");
-  // TODO: Start timer TIM16
+  lcd_putstring("EEE3095S Prac 1");
+
+  typedef uint8_t flag_t;
+
+  //flags for timer 
+  //flag for starting timer
+  flag_t button0 = FALSE;
+
+  //flag for lapping
+  flag_t button1 = FALSE;
+
+  //flag for stopping timer
+  flag_t button2 = FALSE;
+  
+
+
 
   /* USER CODE END 2 */
 
@@ -106,9 +150,54 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
     // TODO: Check pushbuttons to change timer delay
-    
-    
+    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) != GPIO_PIN_SET) //Set button 0 flag to true if button pressed
+    {
+      button0 = TRUE;
+      button1 = FALSE;
+      button2 = FALSE;
+    }
+    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) != GPIO_PIN_SET) //Set button 1 flag to true if button pressed
+    {
+      button0 = FALSE;
+      button1 = TRUE;
+      button2 = FALSE;
+    }
+    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) != GPIO_PIN_SET) //Set button 2 flag to true if button pressed
+    {
+      button0 = FALSE;
+      button1 = FALSE;
+      button2 = TRUE;
+    }
+    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) != GPIO_PIN_SET) //Resets pattern if button pressed
+    {
+      currentPattern = 0; // Reset to pattern 1
+      // delayTime = 1000;
+      // button0 = FALSE;
+      // button1 = FALSE;
+      // button2 = FALSE;
+    }
 
+
+    if (button0)
+    {
+      delayTime = 500; // 0.5 seconds
+      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+    }
+    else if (button1)
+    {
+      delayTime = 2000; // 2 seconds
+      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+    }
+    else if (button2)
+    {
+      delayTime = 1000; // 1 second
+      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+    }
+    // else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) != GPIO_PIN_SET)
+    // {
+    //   currentPattern = 0; // Reset to pattern 1
+    // }
+    
   }
   /* USER CODE END 3 */
 }
@@ -197,55 +286,55 @@ static void MX_GPIO_Init(void)
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED0_GPIO_Port, LED0_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED1_GPIO_Port, LED1_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED2_GPIO_Port, LED2_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED3_GPIO_Port, LED3_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED4_GPIO_Port, LED4_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED5_GPIO_Port, LED5_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED6_GPIO_Port, LED6_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED7_GPIO_Port, LED7_Pin);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = Button0_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(Button0_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = Button1_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(Button1_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = Button2_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(Button2_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = Button3_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(Button3_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED0_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -253,7 +342,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED0_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED1_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -261,7 +350,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED1_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED2_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -269,7 +358,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED2_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED3_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -277,7 +366,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED3_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED4_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -285,7 +374,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED4_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED5_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -293,7 +382,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED5_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED6_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -301,7 +390,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED6_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED7_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -309,7 +398,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED7_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LL_GPIO_PIN_9;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
@@ -329,6 +418,30 @@ void TIM16_IRQHandler(void)
 
 	// TODO: Change LED pattern
 	// print something
+  pattern_display (led_patterns[currentPattern]); //Turns on the current LED pattern 
+	currentPattern = (currentPattern +1)%9; //Moves current pattern counter to next pattern
+  //currentPattern++ %9;  
+  //lcd_command(CLEAR);
+  //lcd_putstring(" Displaying LED patterns");
+
+  // Update timer period
+	__HAL_TIM_SET_AUTORELOAD(&htim16, delay - 1);
+
+  
+}
+
+//pattern display function
+void pattern_display()
+{
+  // Change LED pattern
+	HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, led_patterns[currentPattern][0]);
+	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, led_patterns[currentPattern][1]);
+	HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, led_patterns[currentPattern][2]);
+	HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, led_patterns[currentPattern][3]);
+	HAL_GPIO_WritePin(LED4_GPIO_Port, LED4_Pin, led_patterns[currentPattern][4]);
+	HAL_GPIO_WritePin(LED5_GPIO_Port, LED5_Pin, led_patterns[currentPattern][5]);
+	HAL_GPIO_WritePin(LED6_GPIO_Port, LED6_Pin, led_patterns[currentPattern][6]);
+	HAL_GPIO_WritePin(LED7_GPIO_Port, LED7_Pin, led_patterns[currentPattern][7]);
 
   
 }
