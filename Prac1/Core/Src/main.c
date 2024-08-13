@@ -46,6 +46,9 @@ TIM_HandleTypeDef htim16;
 
 /* USER CODE BEGIN PV */
 // TODO: Define input variables
+//true and false constants
+#define TRUE 1
+#define FALSE 0
 
 uint8_t led_patterns[9][8] =
 {
@@ -121,7 +124,20 @@ int main(void)
   lcd_command(CLEAR);
   lcd_putstring("EEE3095S Prac 1");
 
+  typedef uint8_t flag_t;
+
+  //flags for timer 
+  //flag for starting timer
+  flag_t button0 = FALSE;
+
+  //flag for lapping
+  flag_t button1 = FALSE;
+
+  //flag for stopping timer
+  flag_t button2 = FALSE;
   
+
+
 
   /* USER CODE END 2 */
 
@@ -136,23 +152,47 @@ int main(void)
     // TODO: Check pushbuttons to change timer delay
     if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) != GPIO_PIN_SET)
     {
-      delayTime = 500; // 0.5 seconds
-      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+      button0 = TRUE;
+      button1 = FALSE;
+      button2 = FALSE;
     }
     else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) != GPIO_PIN_SET)
     {
-      delayTime = 2000; // 2 seconds
-      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+      button0 = FALSE;
+      button1 = TRUE;
+      button2 = FALSE;
     }
     else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) != GPIO_PIN_SET)
     {
-      delayTime = 1000; // 1 second
-      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+      button0 = FALSE;
+      button1 = FALSE;
+      button2 = TRUE;
     }
     else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) != GPIO_PIN_SET)
     {
       currentPattern = 0; // Reset to pattern 1
     }
+
+
+    if (button0)
+    {
+      delayTime = 500; // 0.5 seconds
+      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+    }
+    else if (button1)
+    {
+      delayTime = 2000; // 2 seconds
+      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+    }
+    else if (button2)
+    {
+      delayTime = 1000; // 1 second
+      __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
+    }
+    // else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) != GPIO_PIN_SET)
+    // {
+    //   currentPattern = 0; // Reset to pattern 1
+    // }
     
   }
   /* USER CODE END 3 */
@@ -395,6 +435,8 @@ void pattern_display()
 	HAL_GPIO_WritePin(LED5_GPIO_Port, LED5_Pin, led_patterns[currentPattern][5]);
 	HAL_GPIO_WritePin(LED6_GPIO_Port, LED6_Pin, led_patterns[currentPattern][6]);
 	HAL_GPIO_WritePin(LED7_GPIO_Port, LED7_Pin, led_patterns[currentPattern][7]);
+
+  
 }
 
 /* USER CODE END 4 */
