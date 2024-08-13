@@ -1,4 +1,36 @@
 {
+<<<<<<< HEAD
+    "configurations": [
+        {
+            "showDevDebugOutput": "parsed",
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/EEE2046Prac.elf",
+            "name": "Debug STM32",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "preLaunchTask": "Build STM",
+            "device": "stm32f051x8.s",
+            "configFiles": [
+                "openocd.cfg"
+            ]
+        },
+        {
+            "showDevDebugOutput": "parsed",
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/EEE2046Prac.elf",
+            "name": "Attach STM32",
+            "request": "attach",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "preLaunchTask": "Build STM",
+            "device": "stm32f051x8.s",
+            "configFiles": [
+                "openocd.cfg"
+            ]
+        }
+    ]
+=======
   "version": "0.2.0",
   "configurations": [
     {
@@ -49,4 +81,5 @@
       ]
     }
   ]
+>>>>>>> e5d3d545cd413d33bb8a3f58690ca5b11bc4c031
 }

@@ -150,33 +150,37 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
     // TODO: Check pushbuttons to change timer delay
-    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) != GPIO_PIN_SET)
+    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) != GPIO_PIN_SET) //Set button 0 flag to true if button pressed
     {
       button0 = TRUE;
       button1 = FALSE;
       button2 = FALSE;
     }
-    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) != GPIO_PIN_SET)
+    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) != GPIO_PIN_SET) //Set button 1 flag to true if button pressed
     {
       button0 = FALSE;
       button1 = TRUE;
       button2 = FALSE;
     }
-    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) != GPIO_PIN_SET)
+    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2) != GPIO_PIN_SET) //Set button 2 flag to true if button pressed
     {
       button0 = FALSE;
       button1 = FALSE;
       button2 = TRUE;
     }
-    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) != GPIO_PIN_SET)
+    else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3) != GPIO_PIN_SET) //Resets pattern if button pressed
     {
       currentPattern = 0; // Reset to pattern 1
+      // delayTime = 1000;
+      // button0 = FALSE;
+      // button1 = FALSE;
+      // button2 = FALSE;
     }
 
 
     if (button0)
     {
-      delayTime = 500; // 0.5 seconds
+      delayTime = 500; //0.5 seconds
       __HAL_TIM_SET_AUTORELOAD(&htim16, delayTime-1);
     }
     else if (button1)
@@ -282,55 +286,55 @@ static void MX_GPIO_Init(void)
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA);
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOB);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED0_GPIO_Port, LED0_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED1_GPIO_Port, LED1_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED2_GPIO_Port, LED2_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED3_GPIO_Port, LED3_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED4_GPIO_Port, LED4_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED5_GPIO_Port, LED5_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED6_GPIO_Port, LED6_Pin);
 
-  /**/
+  //
   LL_GPIO_ResetOutputPin(LED7_GPIO_Port, LED7_Pin);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = Button0_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(Button0_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = Button1_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(Button1_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = Button2_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(Button2_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = Button3_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   LL_GPIO_Init(Button3_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED0_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -338,7 +342,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED0_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED1_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -346,7 +350,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED1_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED2_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -354,7 +358,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED2_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED3_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -362,7 +366,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED3_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED4_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -370,7 +374,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED4_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED5_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -378,7 +382,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED5_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED6_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -386,7 +390,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED6_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LED7_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
@@ -394,7 +398,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LED7_GPIO_Port, &GPIO_InitStruct);
 
-  /**/
+  //
   GPIO_InitStruct.Pin = LL_GPIO_PIN_9;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
@@ -414,8 +418,11 @@ void TIM16_IRQHandler(void)
 
 	// TODO: Change LED pattern
 	// print something
-  pattern_display (led_patterns[currentPattern]);
-	currentPattern = (currentPattern +1 )%9;
+  pattern_display (led_patterns[currentPattern]); //Turns on the current LED pattern 
+	currentPattern = (currentPattern +1)%9; //Moves current pattern counter to next pattern
+  //currentPattern++ %9;  
+  //lcd_command(CLEAR);
+  //lcd_putstring(" Displaying LED patterns");
 
   // Update timer period
 	__HAL_TIM_SET_AUTORELOAD(&htim16, delay - 1);
