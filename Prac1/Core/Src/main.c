@@ -126,14 +126,14 @@ int main(void)
 
   typedef uint8_t flag_t;
 
-  //flags for timer 
-  //flag for starting timer
+  //flags for button presses
+  //flag for button 0
   flag_t button0 = FALSE;
 
-  //flag for lapping
+  //flag for button 1
   flag_t button1 = FALSE;
 
-  //flag for stopping timer
+  //flag for button 2
   flag_t button2 = FALSE;
   
 
